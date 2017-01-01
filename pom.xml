@@ -19,7 +19,7 @@
 
     <groupId>org.axonframework</groupId>
     <artifactId>axon</artifactId>
-    <version>3.0</version>
+    <version>3.0.cos-fork.1-SNAPSHOT</version>
     <modules>
         <module>core</module>
         <module>spring</module>
@@ -396,21 +396,21 @@
 
     <!-- deploy and release configuration -->
     <distributionManagement>
-        <snapshotRepository>
-            <id>sonatype</id>
-            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
-            <uniqueVersion>true</uniqueVersion>
-        </snapshotRepository>
         <repository>
-            <id>sonatype</id>
-            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2</url>
-            <uniqueVersion>false</uniqueVersion>
+            <id>cosium-repo</id>
+            <name>Internal Release Repository</name>
+            <url>http://repo.cosium.com/repository/internal/</url>
         </repository>
+        <snapshotRepository>
+            <id>cosium-repo-snapshots</id>
+            <name>Internal Snapshot Repository</name>
+            <url>http://repo.cosium.com/repository/snapshots/</url>
+        </snapshotRepository>
     </distributionManagement>
     <scm>
-        <connection>scm:git:git://github.com/AxonFramework/AxonFramework.git</connection>
-        <developerConnection>scm:git:git@github.com:AxonFramework/AxonFramework.git</developerConnection>
-        <url>https://github.com/AxonFramework/AxonFramework</url>
+        <connection>scm:git:git://github.com/Cosium/AxonFramework.git</connection>
+        <developerConnection>scm:git:git@github.com:Cosium/AxonFramework.git</developerConnection>
+        <url>https://github.com/Cosium/AxonFramework</url>
         <tag>axon-3.0</tag>
     </scm>
 
