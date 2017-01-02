@@ -123,16 +123,16 @@
     </build>
 
     <distributionManagement>
-        <snapshotRepository>
-            <id>sonatype</id>
-            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
-            <uniqueVersion>true</uniqueVersion>
-        </snapshotRepository>
         <repository>
-            <id>sonatype</id>
-            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2</url>
-            <uniqueVersion>false</uniqueVersion>
+            <id>cosium-repo</id>
+            <name>Internal Release Repository</name>
+            <url>http://repo.cosium.com/repository/internal/</url>
         </repository>
+        <snapshotRepository>
+            <id>cosium-repo-snapshots</id>
+            <name>Internal Snapshot Repository</name>
+            <url>http://repo.cosium.com/repository/snapshots/</url>
+        </snapshotRepository>
     </distributionManagement>
     <scm>
         <connection>scm:git:git://github.com/AxonFramework/AxonFramework.git</connection>
