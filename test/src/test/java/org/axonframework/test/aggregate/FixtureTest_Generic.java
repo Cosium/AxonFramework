@@ -154,28 +154,6 @@ public class FixtureTest_Generic {
                 new GenericDomainEventMessage<>("test", identifier, 2, new StubDomainEvent()));
     }
 
-    @Test
-    public void testAndGiven() {
-        fixture.registerAggregateFactory(mockAggregateFactory);
-        fixture.registerAnnotatedCommandHandler(new MyCommandHandler(fixture.getRepository(), fixture.getEventBus()));
-
-        fixture.givenCommands(new CreateAggregateCommand("aggregateId"))
-                .andGiven(new MyEvent("aggregateId", 1))
-                .when(new TestCommand("aggregateId"))
-                .expectEvents(new MyEvent("aggregateId", 2));
-    }
-
-    @Test
-    public void testAndGivenCommands() {
-        fixture.registerAggregateFactory(mockAggregateFactory);
-        fixture.registerAnnotatedCommandHandler(new MyCommandHandler(fixture.getRepository(), fixture.getEventBus()));
-
-        fixture.given(new MyEvent("aggregateId", 1))
-                .andGivenCommands(new TestCommand("aggregateId"))
-                .when(new TestCommand("aggregateId"))
-                .expectEvents(new MyEvent("aggregateId", 3));
-    }
-
     private class StubDomainEvent {
 
         public StubDomainEvent() {
