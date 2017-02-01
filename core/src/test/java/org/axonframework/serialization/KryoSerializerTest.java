@@ -2,6 +2,7 @@ package org.axonframework.serialization;
 
 import static org.junit.Assert.*;
 
+import org.axonframework.serialization.kryo.KryoSerializer;
 import org.junit.Before;
 import org.junit.Test;
 
