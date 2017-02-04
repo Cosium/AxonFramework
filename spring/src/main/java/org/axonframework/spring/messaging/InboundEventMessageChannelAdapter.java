@@ -26,6 +26,7 @@ import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageHandler;
 
 import java.time.Instant;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Consumer;
@@ -44,12 +45,14 @@ import static java.util.Collections.singletonList;
 public class InboundEventMessageChannelAdapter implements MessageHandler, SubscribableMessageSource<EventMessage<?>> {
 
     private final CopyOnWriteArrayList<Consumer<List<? extends EventMessage<?>>>> messageProcessors = new CopyOnWriteArrayList<>();
+    private final EventMessageConverter eventMessageConverter;
 
     /**
      * Initialize the adapter to publish all incoming events to the subscribed processors. Note that this instance should
      *  be registered as a consumer of a Spring Message Channel.
      */
     public InboundEventMessageChannelAdapter() {
+        this(Collections.emptyList(), new DefaultEventMessageConverter());
     }
 
     /**
@@ -59,7 +62,13 @@ public class InboundEventMessageChannelAdapter implements MessageHandler, Subscr
      * @param eventBus The EventBus instance for forward all messages to
      */
     public InboundEventMessageChannelAdapter(EventBus eventBus) {
-        messageProcessors.add(eventBus::publish);
+        this(Collections.singletonList(eventBus::publish), new DefaultEventMessageConverter());
+    }
+
+    public InboundEventMessageChannelAdapter(List<Consumer<List<? extends EventMessage<?>>>> processors,
+                                             EventMessageConverter eventMessageConverter){
+        processors.forEach(messageProcessors::add);
+        this.eventMessageConverter = eventMessageConverter;
     }
 
     @Override
@@ -76,7 +85,7 @@ public class InboundEventMessageChannelAdapter implements MessageHandler, Subscr
     @SuppressWarnings({"unchecked"})
     @Override
     public void handleMessage(Message<?> message) {
-        List<? extends GenericEventMessage<?>> messages = singletonList(transformMessage(message));
+        List<? extends EventMessage<?>> messages = singletonList(transformMessage(message));
         for (Consumer<List<? extends EventMessage<?>>> messageProcessor : messageProcessors) {
             messageProcessor.accept(messages);
         }
@@ -89,9 +98,7 @@ public class InboundEventMessageChannelAdapter implements MessageHandler, Subscr
      * @param message the Spring message to convert to an event
      * @return an EventMessage from given Spring message
      */
-    protected GenericEventMessage<?> transformMessage(Message<?> message) {
-        return new GenericEventMessage<>(
-                new GenericMessage<>(message.getPayload(), message.getHeaders()),
-                () -> Instant.ofEpochMilli(message.getHeaders().getTimestamp()));
+    protected EventMessage<?> transformMessage(Message<?> message) {
+        return eventMessageConverter.convertFromInboundMessage(message);
     }
 }
