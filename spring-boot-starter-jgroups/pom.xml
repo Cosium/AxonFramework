@@ -10,7 +10,7 @@
 
     <groupId>org.axonframework</groupId>
     <artifactId>axon-spring-boot-starter-jgroups</artifactId>
-    <version>3.0.cos-fork.8-SNAPSHOT</version>
+    <version>3.0.8.cos-fork-SNAPSHOT</version>
 
     <name>Spring Boot Starter module for Axon with JGroups Distributed Command Bus</name>
 
