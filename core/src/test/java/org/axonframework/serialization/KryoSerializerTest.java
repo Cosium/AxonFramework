@@ -2,6 +2,9 @@ package org.axonframework.serialization;
 
 import static org.junit.Assert.*;
 
+import java.io.ByteArrayOutputStream;
+
+import org.axonframework.messaging.MetaData;
 import org.axonframework.serialization.kryo.KryoSerializer;
 import org.junit.Before;
 import org.junit.Test;
@@ -56,6 +59,15 @@ public class KryoSerializerTest {
 			assertTrue("Wrong message in exception", e.getMessage().contains("unknown"));
 			assertTrue("Wrong message in exception", e.getMessage().contains("0"));
 		}
+	}
+
+	@Test
+	public void testMetaDataClass(){
+		MetaData metaData = MetaData.with("hello", "world");
+		SerializedObject<byte[]> serialized = testSubject.serialize(metaData, byte[].class);
+		MetaData deserMetadata = testSubject.deserialize(serialized);
+
+		assertEquals("world", deserMetadata.get("hello"));
 	}
 
 	@Revision("2166108932776672373")
