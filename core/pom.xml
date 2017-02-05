@@ -195,9 +195,9 @@
 
         <!-- Optional dependencies -->
         <dependency>
-            <groupId>com.esotericsoftware</groupId>
-            <artifactId>kryo</artifactId>
-            <version>4.0.0</version>
+            <groupId>de.javakaffee</groupId>
+            <artifactId>kryo-serializers</artifactId>
+            <version>0.41</version>
             <optional>true</optional>
         </dependency>
         <dependency>

@@ -2,7 +2,8 @@ package org.axonframework.serialization;
 
 import static org.junit.Assert.*;
 
-import java.io.ByteArrayOutputStream;
+import java.util.Collections;
+import java.util.SortedSet;
 
 import org.axonframework.messaging.MetaData;
 import org.axonframework.serialization.kryo.KryoSerializer;
@@ -62,12 +63,20 @@ public class KryoSerializerTest {
 	}
 
 	@Test
-	public void testMetaDataClass(){
+	public void testMetaDataClass() {
 		MetaData metaData = MetaData.with("hello", "world");
 		SerializedObject<byte[]> serialized = testSubject.serialize(metaData, byte[].class);
-		MetaData deserMetadata = testSubject.deserialize(serialized);
+		MetaData deserialized = testSubject.deserialize(serialized);
 
-		assertEquals("world", deserMetadata.get("hello"));
+		assertEquals("world", deserialized.get("hello"));
+	}
+
+	@Test
+	public void testSortedSet() {
+		SortedSet<Object> sortedSet = Collections.emptySortedSet();
+		SerializedObject<byte[]> serialized = testSubject.serialize(sortedSet, byte[].class);
+		Object deserialized = testSubject.deserialize(serialized);
+		assertTrue(deserialized instanceof SortedSet);
 	}
 
 	@Revision("2166108932776672373")
@@ -83,5 +92,4 @@ public class KryoSerializerTest {
 			return someProperty;
 		}
 	}
-
 }
