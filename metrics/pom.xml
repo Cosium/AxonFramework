@@ -3,7 +3,7 @@
     <parent>
         <artifactId>axon</artifactId>
         <groupId>org.axonframework</groupId>
-        <version>3.0.10.cos-fork</version>
+        <version>3.0.11.cos-fork-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
