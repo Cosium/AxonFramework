@@ -19,7 +19,7 @@
 
     <groupId>org.axonframework</groupId>
     <artifactId>axon</artifactId>
-    <version>3.0.15.cos-fork</version>
+    <version>3.0.16.cos-fork-SNAPSHOT</version>
     <modules>
         <module>core</module>
         <module>spring</module>
@@ -411,7 +411,7 @@
         <connection>scm:git:git://github.com/Cosium/AxonFramework.git</connection>
         <developerConnection>scm:git:git@github.com:Cosium/AxonFramework.git</developerConnection>
         <url>https://github.com/Cosium/AxonFramework</url>
-        <tag>axon-3.0.15.cos-fork</tag>
+        <tag>axon-3.0</tag>
     </scm>
 
     <developers>

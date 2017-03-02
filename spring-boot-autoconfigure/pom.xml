@@ -19,7 +19,7 @@
     <parent>
         <groupId>org.axonframework</groupId>
         <artifactId>axon</artifactId>
-        <version>3.0.15.cos-fork</version>
+        <version>3.0.16.cos-fork-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
