@@ -1,5 +1,11 @@
 package org.axonframework.springcloud.commandhandling;
 
+import java.net.URI;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
+
 import org.axonframework.commandhandling.CommandMessage;
 import org.axonframework.commandhandling.distributed.*;
 import org.axonframework.commandhandling.distributed.commandfilter.CommandNameFilter;
@@ -22,6 +28,9 @@ public class SpringCloudCommandRouter implements CommandRouter {
     private static final String LOAD_FACTOR = "loadFactor";
     private static final String SERIALIZED_COMMAND_FILTER = "serializedCommandFilter";
     private static final String SERIALIZED_COMMAND_FILTER_CLASS_NAME = "serializedCommandFilterClassName";
+
+    private static final boolean OVERWRITE_MEMBERS = true;
+    private static final boolean DO_NOT_OVERWRITE_MEMBERS = false;
 
     private final DiscoveryClient discoveryClient;
     private final RoutingStrategy routingStrategy;
@@ -49,7 +58,7 @@ public class SpringCloudCommandRouter implements CommandRouter {
         localServiceInstanceMetadata.put(SERIALIZED_COMMAND_FILTER, serializedCommandFilter.getData());
         localServiceInstanceMetadata.put(SERIALIZED_COMMAND_FILTER_CLASS_NAME, serializedCommandFilter.getType().getName());
 
-        updateMemberships(Collections.singleton(localServiceInstance));
+        updateMemberships(Collections.singleton(localServiceInstance), DO_NOT_OVERWRITE_MEMBERS);
     }
 
     @EventListener
@@ -62,19 +71,31 @@ public class SpringCloudCommandRouter implements CommandRouter {
                         serviceInstance.getMetadata().containsKey(SERIALIZED_COMMAND_FILTER) &&
                         serviceInstance.getMetadata().containsKey(SERIALIZED_COMMAND_FILTER_CLASS_NAME) )
                 .collect(Collectors.toSet());
-        updateMemberships(allServiceInstances);
+        updateMemberships(allServiceInstances, OVERWRITE_MEMBERS);
     }
 
-    private void updateMemberships(Set<ServiceInstance> serviceInstances) {
+    /**
+     * Update the router memberships.
+     * @param serviceInstances Services instances to add
+     * @param overwrite True to evict members absent from serviceInstances
+     */
+    private void updateMemberships(Set<ServiceInstance> serviceInstances, boolean overwrite) {
+        AtomicReference<ConsistentHash> updatedConsistentHash;
+        if (overwrite) {
+            updatedConsistentHash = new AtomicReference<>(new ConsistentHash());
+        } else {
+            updatedConsistentHash = atomicConsistentHash;
+        }
+
         ServiceInstance localServiceInstance = discoveryClient.getLocalServiceInstance();
         String localServiceId = localServiceInstance.getServiceId();
         URI localServiceUri = localServiceInstance.getUri();
 
-        serviceInstances.forEach(serviceInstance -> {
+        serviceInstances
+                .forEach(serviceInstance -> {
             URI serviceUri = serviceInstance.getUri();
             String serviceId = serviceInstance.getServiceId();
             boolean local = localServiceId.equals(serviceId) && localServiceUri.equals(serviceUri);
-
             SimpleMember<URI> simpleMember = new SimpleMember<>(
                     serviceId.toUpperCase() + "[" + serviceUri + "]",
                     serviceUri,
@@ -90,10 +111,12 @@ public class SpringCloudCommandRouter implements CommandRouter {
                     serviceInstanceMetadata.get(SERIALIZED_COMMAND_FILTER_CLASS_NAME), null);
             CommandNameFilter commandNameFilter = serializer.deserialize(serializedObject);
 
-            atomicConsistentHash.updateAndGet(
+            updatedConsistentHash.updateAndGet(
                     consistentHash -> consistentHash.with(simpleMember, loadFactor, commandNameFilter)
             );
         });
+
+        atomicConsistentHash.set(updatedConsistentHash.get());
     }
 
 }
