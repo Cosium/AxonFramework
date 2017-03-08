@@ -76,7 +76,7 @@ public class SpringCloudCommandRouter implements CommandRouter {
             boolean local = localServiceId.equals(serviceId) && localServiceUri.equals(serviceUri);
 
             SimpleMember<URI> simpleMember = new SimpleMember<>(
-                    serviceId.toUpperCase(),
+                    serviceId.toUpperCase() + "[" + serviceUri + "]",
                     serviceUri,
                     local,
                     member -> atomicConsistentHash.updateAndGet(consistentHash -> consistentHash.without(member))
