@@ -202,9 +202,9 @@ public class SpringCloudCommandRouterTest {
     public void testUpdateMembershipsOnHeartbeatEventTwoInstancesOnSameServiceIdUpdatesConsistentHash(){
         int expectedMemberSetSize = 2;
 
-        serviceInstanceMetadata.put(LOAD_FACTOR_KEY, Integer.toString(LOAD_FACTOR));
-        serviceInstanceMetadata.put(SERIALIZED_COMMAND_FILTER_KEY, serializedCommandFilterData);
-        serviceInstanceMetadata.put(SERIALIZED_COMMAND_FILTER_CLASS_NAME_KEY, serializedCommandFilterClassName);
+        serviceInstanceMetadata.put("loadFactor", Integer.toString(LOAD_FACTOR));
+        serviceInstanceMetadata.put("serializedCommandFilter", SERIALIZED_COMMAND_FILTER);
+        serviceInstanceMetadata.put("serializedCommandFilterClassName", SERIALIZED_COMMAND_FILTER_CLASS_NAME);
 
         ServiceInstance remoteInstance = mock(ServiceInstance.class);
         when(remoteInstance.getServiceId()).thenReturn(SERVICE_INSTANCE_ID);
